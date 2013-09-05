@@ -193,7 +193,11 @@
 		return this.each(function () {
 			var $glue = $(this);
 			var $source = $(options.source);
-			var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
+			var formattedSource;
+			if($source.is('img'))
+				formattedSource = $source.attr('src');
+			else
+				formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
 			ctx = canvas.getContext('2d');
 			tempImg = new Image();
 			tempImg.onload = function () {
