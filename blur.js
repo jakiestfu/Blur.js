@@ -196,6 +196,16 @@
 			var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
 			ctx = canvas.getContext('2d');
 			tempImg = new Image();
+			
+			//Some image sources (eg. images form s3) doesnot allow to be manipulated in
+			//javascript canvas. The following attribute helps to overcome this security
+			//issue and the exceptions thrown from stackBlurCanvasRGB are less probable to 
+			//happen if this attrib is set.
+			//NOTE: you still need to set the correct CORS config in CDNs
+			if(formattedSource.match(/http:\/\/|https:\/\//)) {
+				tempImg.setAttribute('crossorigin', 'anonymous');
+			}
+			
 			tempImg.onload = function () {
 				if(!isCached) {
 					canvas.style.display = "none";
