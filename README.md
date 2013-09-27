@@ -30,3 +30,6 @@ $('.target').blurjs({
 	draggable: false				//Only used if jQuery UI is present. Will change background-position to fixed
 });
 ````
+
+## Licensing
+MIT
