@@ -205,7 +205,7 @@
 					stackBlurCanvasRGB(canvas, 0, 0, canvas.width, canvas.height, options.radius);
 					if(options.overlay != false) {
 						ctx.beginPath();
-						ctx.rect(0, 0, tempImg.width, tempImg.width);
+						ctx.rect(0, 0, tempImg.width, tempImg.height);
 						ctx.fillStyle = options.overlay;
 						ctx.fill();
 					}
