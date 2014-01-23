@@ -1,13 +1,33 @@
 (function ($) {
+	Storage.prototype.cacheChecksum = function (opts, formattedSource) {
+		var newData = '';
+		for(var key in opts) {
+			var obj = opts[key];
+			if(obj.toString() == '[object Object]') {
+				newData += ((obj.x).toString() + (obj.y).toString() + ",").replace(/[^a-zA-Z0-9]/g, "");
+			} else {
+				newData += (obj + ",").replace(/[^a-zA-Z0-9]/g, "");
+			}
+		}
+		var originalData = this.getItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
+		if(originalData != newData) {
+			this.removeItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
+			this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
+			if(opts.debug) {
+				console.log('Settings Changed, Cache Emptied');
+			}
+		}
+	};
+
 	$.fn.blurjs = function (options) {
 		var canvas = document.createElement('canvas');
 		var isCached = false;
-		var selector = ($(this).selector).replace(/[^a-zA-Z0-9]/g, "");
 		if(!canvas.getContext) {
 			return;
 		}
 		options = $.extend({
 			source: 'body',
+			selector: ($(this).selector).replace(/[^a-zA-Z0-9]/g, ""),
 			radius: 5,
 			overlay: '',
 			offset: {
@@ -190,13 +210,13 @@
 			this.a = 0;
 			this.next = null
 		}
-		return this.each(function () {
+		var $source = $(options.source);
+		var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
+		return this.each(function() {
 			var $glue = $(this);
-			var $source = $(options.source);
-			var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
-			ctx = canvas.getContext('2d');
+			var ctx = canvas.getContext('2d');
 			tempImg = new Image();
-			tempImg.onload = function () {
+			tempImg.onload = function() {
 				if(!isCached) {
 					canvas.style.display = "none";
 					canvas.width = tempImg.width;
@@ -212,12 +232,10 @@
 					var blurredData = canvas.toDataURL();
 					if(options.cache) {
 						try {
-							if(options.debug) {
-								console.log('Cache Set');
-							}
-							localStorage.setItem(options.cacheKeyPrefix + selector + '-' + formattedSource + '-data-image', blurredData);
+							options.debug && console.log('Cache Set');
+							localStorage.setItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image', blurredData);
 						} catch(e) {
-							console.log(e);
+							typeof console !== 'undefined' && console.log(e);
 						}
 					}
 				} else {
@@ -229,7 +247,8 @@
 					'background-image': 'url("' + blurredData + '")',
 					'background-repeat': $source.css('backgroundRepeat'),
 					'background-position': position,
-					'background-attachment': attachment
+					'background-attachment': attachment,
+					'background-size': $source.css('backgroundSize')
 				});
 				if(options.optClass != false) {
 					$glue.addClass(options.optClass);
@@ -242,40 +261,18 @@
 					$glue.draggable();
 				}
 			};
-			Storage.prototype.cacheChecksum = function (opts) {
-				var newData = '';
-				for(var key in opts) {
-					var obj = opts[key];
-					if(obj.toString() == '[object Object]') {
-						newData += ((obj.x).toString() + (obj.y).toString() + ",").replace(/[^a-zA-Z0-9]/g, "");
-					} else {
-						newData += (obj + ",").replace(/[^a-zA-Z0-9]/g, "");
-					}
-				}
-				var originalData = this.getItem(options.cacheKeyPrefix + selector + '-' + formattedSource + '-options-cache');
-				if(originalData != newData) {
-					this.removeItem(options.cacheKeyPrefix + selector + '-' + formattedSource + '-options-cache');
-					this.setItem(options.cacheKeyPrefix + selector + '-' + formattedSource + '-options-cache', newData);
-					if(options.debug) {
-						console.log('Settings Changed, Cache Emptied');
-					}
-				}
-			};
 			var cachedData = null;
 			if(options.cache) {
-				localStorage.cacheChecksum(options);
-				cachedData = localStorage.getItem(options.cacheKeyPrefix + selector + '-' + formattedSource + '-data-image');
+				localStorage.cacheChecksum(options, formattedSource);
+				cachedData = localStorage.getItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image');
 			}
 			if(cachedData != null) {
-				if(options.debug) {
-					console.log('Cache Used');
-				}
+				options.debug && console.log('Cache Used');
+
 				isCached = true;
 				tempImg.src = (cachedData);
 			} else {
-				if(options.debug) {
-					console.log('Source Used');
-				}
+				options.debug && console.log('Source Used');
 				tempImg.src = formattedSource;
 			}
 		});
