@@ -1,21 +1,26 @@
 (function ($) {
+	var noSpecialChars = /[^a-zA-Z0-9]/g;
+	noSpecialChars.regexp = function() {
+		noSpecialChars.lastIndex = 0;
+		return noSpecialChars;
+	}
 	Storage.prototype.cacheChecksum = function (opts, formattedSource) {
 		var newData = '';
 		for(var key in opts) {
 			var obj = opts[key];
-			if(obj.toString() == '[object Object]') {
-				newData += ((obj.x).toString() + (obj.y).toString() + ",").replace(/[^a-zA-Z0-9]/g, "");
+			if($.isPlainObject(obj)) {
+				newData += ((obj.x).toString() + (obj.y).toString() + ",").replace(noSpecialChars.regexp(), "");
+			} else if(typeof obj === 'object') { // DOM element
+				newData += obj.nodeName + '#' + obj.id + '.' + obj.className;
 			} else {
-				newData += (obj + ",").replace(/[^a-zA-Z0-9]/g, "");
+				newData += (obj + ",").replace(noSpecialChars.regexp(), "");
 			}
 		}
 		var originalData = this.getItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
 		if(originalData != newData) {
 			this.removeItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
 			this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
-			if(opts.debug) {
-				console.log('Settings Changed, Cache Emptied');
-			}
+			opts.debug && console.log('Settings Changed, Cache Emptied');
 		}
 	};
 
@@ -295,14 +300,17 @@
 	}
 
 	$.fn.blurjs = function(options) {
+		if(!this.length) {
+			return this;
+		}
 		var _this = this;
 		var canvas = document.createElement('canvas');
 		if(!canvas.getContext) {
-			return;
+			return this;
 		}
 		options = $.extend({
 			source: document.body,
-			selector: this.selector.replace(/[^a-zA-Z0-9]/g, ""),
+			selector: this.selector.replace(noSpecialChars.regexp(), ""),
 			radius: 5,
 			overlay: '',
 			offset: {
@@ -388,6 +396,9 @@
 			};
 			
 			tempImg.src = formattedSource;
+			
+			
+			return _this;
 		}
 	};
 })(jQuery);
