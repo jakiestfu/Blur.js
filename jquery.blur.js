@@ -294,7 +294,7 @@
 		return document.getElementById(elementOrID);
 	}
 
-	$.fn.blurjs = function (options) {
+	$.fn.blurjs = function(options) {
 		var canvas = document.createElement('canvas');
 		if(!canvas.getContext) {
 			return;
@@ -318,24 +318,31 @@
 
 		var $source = $(options.source);
 		var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
+		var sourceCss = {
+			'background-repeat': $source.css('backgroundRepeat'),
+			'background-size': $source.css('backgroundSize'),
+			'background-attachment': $source.css('backgroundAttachment')
+		};
+		var sourceOffset = $source.offset();
 		return this.each(function() {
-			var $glue = $(this);
-			var ctx = canvas.getContext('2d');
-			tempImg = new Image();
+			var $glue = $(this),
+					ctx = canvas.getContext('2d'),
+					tempImg = new Image();
 			tempImg.onload = function() {
+				var blurredData;
 				if(!isCached) {
 					canvas.style.display = "none";
 					canvas.width = tempImg.width;
 					canvas.height = tempImg.height;
 					ctx.drawImage(tempImg, 0, 0);
 					stackBlurCanvasRGB(canvas, 0, 0, canvas.width, canvas.height, options.radius);
-					if(options.overlay != false) {
+					if(options.overlay) {
 						ctx.beginPath();
 						ctx.rect(0, 0, tempImg.width, tempImg.width);
 						ctx.fillStyle = options.overlay;
 						ctx.fill();
 					}
-					var blurredData = canvas.toDataURL();
+					blurredData = canvas.toDataURL();
 					if(options.cache) {
 						try {
 							options.debug && console.log('Cache Set');
@@ -345,18 +352,15 @@
 						}
 					}
 				} else {
-					var blurredData = tempImg.src;
+					blurredData = tempImg.src;
 				}
-				var attachment = $source.css('backgroundAttachment');
-				var position = (attachment == 'fixed') ? '' : '-' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
-				$glue.css({
+				var glueOffset = $glue.offset();
+				var position = (sourceCss['background-attachment'] == 'fixed') ? '' : '-' + ((glueOffset.left) - (sourceOffset.left) - (options.offset.x)) + 'px -' + ((glueOffset.top) - (sourceOffset.top) - (options.offset.y)) + 'px';
+				$glue.css($.extend({
 					'background-image': 'url("' + blurredData + '")',
-					'background-repeat': $source.css('backgroundRepeat'),
-					'background-position': position,
-					'background-attachment': attachment,
-					'background-size': $source.css('backgroundSize')
-				});
-				if(options.optClass != false) {
+					'background-position': position
+				},sourceCss));
+				if(options.optClass) {
 					$glue.addClass(options.optClass);
 				}
 				if(options.draggable) {
@@ -367,16 +371,15 @@
 					$glue.draggable();
 				}
 			};
-			var cachedData = null;
+			var cachedData;
 			if(options.cache) {
 				localStorage.cacheChecksum(options, formattedSource);
 				cachedData = localStorage.getItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image');
 			}
-			if(cachedData != null) {
+			if(cachedData) {
 				options.debug && console.log('Cache Used');
-
 				isCached = true;
-				tempImg.src = (cachedData);
+				tempImg.src = cachedData;
 			} else {
 				options.debug && console.log('Source Used');
 				tempImg.src = formattedSource;
