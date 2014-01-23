@@ -295,14 +295,14 @@
 	}
 
 	$.fn.blurjs = function(options) {
+		var _this = this;
 		var canvas = document.createElement('canvas');
 		if(!canvas.getContext) {
 			return;
 		}
-		var isCached = false;
 		options = $.extend({
-			source: 'body',
-			selector: ($(this).selector).replace(/[^a-zA-Z0-9]/g, ""),
+			source: document.body,
+			selector: this.selector.replace(/[^a-zA-Z0-9]/g, ""),
 			radius: 5,
 			overlay: '',
 			offset: {
@@ -318,72 +318,76 @@
 
 		var $source = $(options.source);
 		var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
+		var sourceOffset = $source.offset();
 		var sourceCss = {
 			'background-repeat': $source.css('backgroundRepeat'),
 			'background-size': $source.css('backgroundSize'),
 			'background-attachment': $source.css('backgroundAttachment')
 		};
-		var sourceOffset = $source.offset();
-		return this.each(function() {
-			var $glue = $(this),
-					ctx = canvas.getContext('2d'),
+
+		function setBlurredImg($glue, blurredData) {
+			$glue = $($glue);
+			var glueOffset = $glue.offset();
+			var position = (sourceCss['background-attachment'] == 'fixed') ? '' : '-' + ((glueOffset.left) - (sourceOffset.left) - (options.offset.x)) + 'px -' + ((glueOffset.top) - (sourceOffset.top) - (options.offset.y)) + 'px';
+			$glue.css($.extend({
+				'background-image': 'url("' + blurredData + '")',
+				'background-position': position
+			},sourceCss));
+			if(options.optClass) {
+				$glue.addClass(options.optClass);
+			}
+			if(options.draggable) {
+				$glue.css({
+					'background-attachment': 'fixed',
+					'background-position': '0 0'
+				});
+				$glue.draggable();
+			}
+		}
+
+		var cachedData;
+		if(options.cache) {
+			localStorage.cacheChecksum(options, formattedSource);
+			cachedData = localStorage.getItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image');
+		}
+		if(cachedData) {
+			options.debug && console.log('Cache Used');
+			return this.each(function() {
+				setBlurredImg(this, cachedData);
+			});
+		} else {
+			var ctx = canvas.getContext('2d'),
 					tempImg = new Image();
+
 			tempImg.onload = function() {
 				var blurredData;
-				if(!isCached) {
-					canvas.style.display = "none";
-					canvas.width = tempImg.width;
-					canvas.height = tempImg.height;
-					ctx.drawImage(tempImg, 0, 0);
-					stackBlurCanvasRGB(canvas, 0, 0, canvas.width, canvas.height, options.radius);
-					if(options.overlay) {
-						ctx.beginPath();
-						ctx.rect(0, 0, tempImg.width, tempImg.width);
-						ctx.fillStyle = options.overlay;
-						ctx.fill();
+				canvas.style.display = "none";
+				canvas.width = tempImg.width;
+				canvas.height = tempImg.height;
+				ctx.drawImage(tempImg, 0, 0);
+				stackBlurCanvasRGB(canvas, 0, 0, canvas.width, canvas.height, options.radius);
+				if(options.overlay) {
+					ctx.beginPath();
+					ctx.rect(0, 0, tempImg.width, tempImg.width);
+					ctx.fillStyle = options.overlay;
+					ctx.fill();
+				}
+				blurredData = canvas.toDataURL();
+				if(options.cache) {
+					try {
+						options.debug && console.log('Cache Set');
+						localStorage.setItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image', blurredData);
+					} catch(e) {
+						typeof console !== 'undefined' && console.log(e);
 					}
-					blurredData = canvas.toDataURL();
-					if(options.cache) {
-						try {
-							options.debug && console.log('Cache Set');
-							localStorage.setItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image', blurredData);
-						} catch(e) {
-							typeof console !== 'undefined' && console.log(e);
-						}
-					}
-				} else {
-					blurredData = tempImg.src;
 				}
-				var glueOffset = $glue.offset();
-				var position = (sourceCss['background-attachment'] == 'fixed') ? '' : '-' + ((glueOffset.left) - (sourceOffset.left) - (options.offset.x)) + 'px -' + ((glueOffset.top) - (sourceOffset.top) - (options.offset.y)) + 'px';
-				$glue.css($.extend({
-					'background-image': 'url("' + blurredData + '")',
-					'background-position': position
-				},sourceCss));
-				if(options.optClass) {
-					$glue.addClass(options.optClass);
-				}
-				if(options.draggable) {
-					$glue.css({
-						'background-attachment': 'fixed',
-						'background-position': '0 0'
-					});
-					$glue.draggable();
-				}
-			};
-			var cachedData;
-			if(options.cache) {
-				localStorage.cacheChecksum(options, formattedSource);
-				cachedData = localStorage.getItem(options.cacheKeyPrefix + options.selector + '-' + formattedSource + '-data-image');
-			}
-			if(cachedData) {
-				options.debug && console.log('Cache Used');
-				isCached = true;
-				tempImg.src = cachedData;
-			} else {
 				options.debug && console.log('Source Used');
-				tempImg.src = formattedSource;
-			}
-		});
+				_this.each(function() {
+					setBlurredImg(this, blurredData);
+				});
+			};
+			
+			tempImg.src = formattedSource;
+		}
 	};
 })(jQuery);
