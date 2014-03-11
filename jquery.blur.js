@@ -1,15 +1,16 @@
+
 (function ($) {
 	var noSpecialChars = /[^a-zA-Z0-9]/g;
 	noSpecialChars.regexp = function() {
 		noSpecialChars.lastIndex = 0;
 		return noSpecialChars;
 	}
-	Storage.prototype.cacheChecksum = function (opts, formattedSource) {
+	Storage.prototype.cacheChecksum = function(opts, formattedSource) {
 		var newData = '';
 		for(var key in opts) {
 			var obj = opts[key];
 			if($.isPlainObject(obj)) {
-				newData += ((obj.x).toString() + (obj.y).toString() + ",").replace(noSpecialChars.regexp(), "");
+				newData += (obj.x.toString() + obj.y.toString() + ",").replace(noSpecialChars.regexp(), "");
 			} else if(typeof obj === 'object') { // DOM element
 				newData += obj.nodeName + '#' + obj.id + '.' + obj.className;
 			} else {
@@ -88,7 +89,6 @@
 				} catch (e) {
 					alert("Cannot access local image");
 					throw new Error("unable to access local image data: " + e);
-					return;
 				}
 			}
 		} catch (e) {
@@ -101,9 +101,9 @@
 		var x, y, i, p, yp, yi, yw, r_sum, g_sum, b_sum,
 			r_out_sum, g_out_sum, b_out_sum,
 			r_in_sum, g_in_sum, b_in_sum,
-			pr, pg, pb, rbs;
+			pr, pg, pb, rbs, stackEnd;
 
-		var div = radius + radius + 1;
+		var div = radius*2 + 1;
 		var w4 = width << 2;
 		var widthMinus1 = width - 1;
 		var heightMinus1 = height - 1;
@@ -114,7 +114,7 @@
 		var stack = stackStart;
 		for (i = 1; i < div; i++) {
 			stack = stack.next = new BlurStack();
-			if (i == radiusPlus1) var stackEnd = stack;
+			if (i === radiusPlus1) stackEnd = stack;
 		}
 		stack.next = stackStart;
 		var stackIn = null;
@@ -138,14 +138,14 @@
 
 			stack = stackStart;
 
-			for (i = 0; i < radiusPlus1; i++) {
+			for (i = 0; i++ < radiusPlus1;) {
 				stack.r = pr;
 				stack.g = pg;
 				stack.b = pb;
 				stack = stack.next;
 			}
 
-			for (i = 1; i < radiusPlus1; i++) {
+			for (i = 0; ++i < radiusPlus1;) {
 				p = yi + ((widthMinus1 < i ? widthMinus1 : i) << 2);
 				r_sum += (stack.r = (pr = pixels[p])) * (rbs = radiusPlus1 - i);
 				g_sum += (stack.g = (pg = pixels[p + 1])) * rbs;
@@ -157,7 +157,6 @@
 
 				stack = stack.next;
 			}
-
 
 			stackIn = stackStart;
 			stackOut = stackEnd;
@@ -286,10 +285,7 @@
 
 	}
 	function BlurStack() {
-		this.r = 0;
-		this.g = 0;
-		this.b = 0;
-		this.a = 0;
+		this.r = this.b = this.g = 0;
 		this.next = null;
 	}
 	function stackBlurGetElement(elementOrID) {
@@ -321,11 +317,12 @@
 			cache: false,
 			cacheKeyPrefix: 'blurjs-',
 			draggable: false,
-			debug: false
+			debug: false,
+			useCss: true
 		}, options);
 
 		var $source = $(options.source);
-		var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
+		var formattedSource = $source.css('backgroundImage').replace(/"/g, "").replace(/url\(|\)$/ig, "");
 		var sourceOffset = $source.offset();
 		var sourceCss = {
 			'background-repeat': $source.css('backgroundRepeat'),
@@ -336,21 +333,32 @@
 		function setBlurredImg($glue, blurredData) {
 			$glue = $($glue);
 			var glueOffset = $glue.offset();
-			var position = (sourceCss['background-attachment'] == 'fixed') ? '' : '-' + ((glueOffset.left) - (sourceOffset.left) - (options.offset.x)) + 'px -' + ((glueOffset.top) - (sourceOffset.top) - (options.offset.y)) + 'px';
-			$glue.css($.extend({
+			var finalCss = $.extend({
 				'background-image': 'url("' + blurredData + '")',
-				'background-position': position
-			},sourceCss));
+				'background-position': (sourceCss['background-attachment'] == 'fixed') ? '' : '-' + ((glueOffset.left) - (sourceOffset.left) - (options.offset.x)) + 'px -' + ((glueOffset.top) - (sourceOffset.top) - (options.offset.y)) + 'px'
+			}, sourceCss);
+
 			if(options.optClass) {
 				$glue.addClass(options.optClass);
 			}
 			if(options.draggable) {
-				$glue.css({
+				$.extend(finalCss, {
 					'background-attachment': 'fixed',
 					'background-position': '0 0'
 				});
 				$glue.draggable();
 			}
+			if(options.useCss) {
+				var outCss = '{';
+				for(var x in finalCss) {
+					if(finalCss[x] && finalCss.hasOwnProperty(x)) {
+						outCss += "\n" + x + ":" + finalCss[x] + ";"
+					}
+				}
+				$('<style>'+_this.selector + outCss + '}<style>').appendTo('head');
+				return false; //break $.each loop
+			}
+			$glue.css(finalCss)
 		}
 
 		var cachedData;
@@ -361,7 +369,7 @@
 		if(cachedData) {
 			options.debug && console.log('Cache Used');
 			return this.each(function() {
-				setBlurredImg(this, cachedData);
+				return setBlurredImg(this, cachedData);
 			});
 		} else {
 			var ctx = canvas.getContext('2d'),
@@ -391,13 +399,10 @@
 				}
 				options.debug && console.log('Source Used');
 				_this.each(function() {
-					setBlurredImg(this, blurredData);
+					return setBlurredImg(this, blurredData);
 				});
 			};
-			
 			tempImg.src = formattedSource;
-			
-			
 			return _this;
 		}
 	};
