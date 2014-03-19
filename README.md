@@ -18,16 +18,19 @@ $('.target').blurjs({
 ````
 $('.target').blurjs({
 	source: 'body',		//Background to blur
-	radius: 5,			//Blur Radius
+	radius: 5,		//Blur Radius
 	overlay: '',		//Overlay Color, follow CSS3's rgba() syntax
-	offset: {			//Pixel offset of background-position
+	offset: {		//Pixel offset of background-position
 		x: 0,
 		y: 0
 	},
-	optClass: '',					//Class to add to all affected elements
-	cache: false,					//If set to true, blurred image will be cached and used in the future. If image is in cache already, it will be used.
-	cacheKeyPrefix: 'blurjs-',		//Prefix to the keyname in the localStorage object
-	draggable: false				//Only used if jQuery UI is present. Will change background-position to fixed
+	optClass: '',		//Class to add to all affected elements
+	cache: false,		//If set to true, blurred image will be cached and used in the future. If image is in cache already, it will be used.
+	cacheKeyPrefix: 'blurjs-',	//Prefix to the keyname in the localStorage object
+	draggable: false,	//Only used if jQuery UI is present. Will change background-position to fixed
+	debug: false,		//put debug info in console
+	useCss: true,		//Use <style>...</style> instead of inline styles. best for multiple targets
+	onReady: null		//Callback triggered when image is loaded, blured and applied to dtarget.
 });
 ````
 
