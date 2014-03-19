@@ -20,7 +20,11 @@
 		var originalData = this.getItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
 		if(originalData != newData) {
 			this.removeItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
-			this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
+      try {
+        this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
+      } catch(err) {
+        typeof console !== 'undefined' && console.warn(err);
+      }
 			opts.debug && console.log('Settings Changed, Cache Emptied');
 		}
 	};
@@ -355,7 +359,8 @@
 						outCss += "\n" + x + ":" + finalCss[x] + ";"
 					}
 				}
-				$('<style>'+_this.selector + outCss + '}<style>').appendTo('head');
+        $('head style[data-selector="blurjs-' + _this.selector +'"]').remove();
+				$('<style data-selector="blurjs-' + _this.selector +'">'+_this.selector + outCss + '}<style>').appendTo('head');
 				return false; //break $.each loop
 			}
 			$glue.css(finalCss)
