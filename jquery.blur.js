@@ -4,7 +4,8 @@
 	noSpecialChars.regexp = function() {
 		noSpecialChars.lastIndex = 0;
 		return noSpecialChars;
-	}
+	};
+	typeof Storage === 'undefined' && (Storage = {});
 	Storage.prototype.cacheChecksum = function(opts, formattedSource) {
 		var newData = '';
 		for(var key in opts) {
@@ -33,11 +34,11 @@
 /*
 StackBoxBlur - a fast almost Box Blur For Canvas
 
-Version: 	0.3
-Author:		Mario Klingemann
-Contact: 	mario@quasimondo.com
-Website:	http://www.quasimondo.com/
-Twitter:	@quasimondo
+Version:  0.3
+Author:   Mario Klingemann
+Contact:  mario@quasimondo.com
+Website:  http://www.quasimondo.com/
+Twitter:  @quasimondo
 */
 
 var mul_table = [1, 171, 205, 293, 57, 373, 79, 137, 241, 27, 391, 357, 41, 19, 283, 265, 497, 469, 443, 421, 25, 191, 365, 349, 335, 161, 155, 149, 9, 278, 269, 261, 505, 245, 475, 231, 449, 437, 213, 415, 405, 395, 193, 377, 369, 361, 353, 345, 169, 331, 325, 319, 313, 307, 301, 37, 145, 285, 281, 69, 271, 267, 263, 259, 509, 501, 493, 243, 479, 118, 465, 459, 113, 446, 55, 435, 429, 423, 209, 413, 51, 403, 199, 393, 97, 3, 379, 375, 371, 367, 363, 359, 355, 351, 347, 43, 85, 337, 333, 165, 327, 323, 5, 317, 157, 311, 77, 305, 303, 75, 297, 294, 73, 289, 287, 71, 141, 279, 277, 275, 68, 135, 67, 133, 33, 262, 260, 129, 511, 507, 503, 499, 495, 491, 61, 121, 481, 477, 237, 235, 467, 232, 115, 457, 227, 451, 7, 445, 221, 439, 218, 433, 215, 427, 425, 211, 419, 417, 207, 411, 409, 203, 202, 401, 399, 396, 197, 49, 389, 387, 385, 383, 95, 189, 47, 187, 93, 185, 23, 183, 91, 181, 45, 179, 89, 177, 11, 175, 87, 173, 345, 343, 341, 339, 337, 21, 167, 83, 331, 329, 327, 163, 81, 323, 321, 319, 159, 79, 315, 313, 39, 155, 309, 307, 153, 305, 303, 151, 75, 299, 149, 37, 295, 147, 73, 291, 145, 289, 287, 143, 285, 71, 141, 281, 35, 279, 139, 69, 275, 137, 273, 17, 271, 135, 269, 267, 133, 265, 33, 263, 131, 261, 130, 259, 129, 257, 1];
@@ -74,7 +75,6 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 			} catch (e) {
 				alert("Cannot access local image");
 				throw new Error("unable to access local image data: " + e);
-				return;
 			}
 		}
 	} catch (e) {
@@ -85,12 +85,9 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 	var pixels = imageData.data;
 
 	var x, y, i, p, yp, yi, yw, r_sum, g_sum, b_sum,
-		r_out_sum, g_out_sum, b_out_sum,
-		r_in_sum, g_in_sum, b_in_sum,
-		pr, pg, pb, rbs;
+		pr, pg, pb;
 
 	var div = radius + radius + 1;
-	var w4 = width << 2;
 	var widthMinus1 = width - 1;
 	var heightMinus1 = height - 1;
 	var radiusPlus1 = radius + 1;
@@ -99,7 +96,6 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 	var stack = stackStart;
 	for (i = 1; i < div; i++) {
 		stack = stack.next = new BlurStack();
-		if (i == radiusPlus1) var stackEnd = stack;
 	}
 	stack.next = stackStart;
 	var stackIn = null;
@@ -268,14 +264,14 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 				var outCss = '{';
 				for(var x in finalCss) {
 					if(finalCss[x] && finalCss.hasOwnProperty(x)) {
-						outCss += "\n" + x + ":" + finalCss[x] + ";"
+						outCss += x + ":" + finalCss[x] + ";";
 					}
 				}
 				$('head style[data-selector="blurjs-' + _this.selector +'"]').remove();
 				$('<style data-selector="blurjs-' + _this.selector +'">' + _this.selector + outCss + '}<style>').appendTo('head');
 				return false; //break $.each loop
 			}
-			$glue.css(finalCss)
+			$glue.css(finalCss);
 		}
 
 		var cachedData;
