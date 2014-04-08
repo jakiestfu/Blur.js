@@ -11,8 +11,8 @@
 			radius: 5,
 			overlay: '',
 			offset: {
-				x: 0,
-				y: 0
+				x: 0, //can also be left/right
+				y: 0 //can also be top/bottom
 			},
 			optClass: '',
 			cache: false,
@@ -224,7 +224,17 @@
 					var blurredData = tempImg.src;
 				}
 				var attachment = $source.css('backgroundAttachment');
-				var position = (attachment == 'fixed') ? '' : '-' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
+				var position = '';
+		                if ( options.offset.x.isNumeric && options.offset.y.isNumeric ) {
+		                    position = (attachment == 'fixed') ? '' : '-' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
+		                } else if( !options.offset.y.isNumeric && !options.offset.x.isNumeric &&( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') &&( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right')) {
+		                    position = (attachment == 'fixed') ? '' : options.offset.y + ' ' + options.offset.x;
+		                } else if ( !options.offset.y.isNumeric &&( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') ) {
+		                    position = (attachment == 'fixed') ? '' : options.offset.y + ' -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
+		                }
+		                else if ( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right'){
+		                    position = (attachment == 'fixed') ? '' : ' -' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px ' + options.offset.x.toLowerCase ;
+		                }
 				$glue.css({
 					'background-image': 'url("' + blurredData + '")',
 					'background-repeat': $source.css('backgroundRepeat'),
