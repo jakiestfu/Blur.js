@@ -225,14 +225,17 @@
 				}
 				var attachment = $source.css('backgroundAttachment');
 				var position = '';
-		                if ( options.offset.x.isNumeric && options.offset.y.isNumeric ) {
+		                if ( !isNaN(options.offset.x) && !isNaN(options.offset.y) ) {
 		                    position = (attachment == 'fixed') ? '' : '-' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
-		                } else if( !options.offset.y.isNumeric && !options.offset.x.isNumeric &&( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') &&( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right')) {
-		                    position = (attachment == 'fixed') ? '' : options.offset.y + ' ' + options.offset.x;
-		                } else if ( !options.offset.y.isNumeric &&( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') ) {
-		                    position = (attachment == 'fixed') ? '' : options.offset.y + ' -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
-		                }
-		                else if ( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right'){
+		                } else if( isNaN(options.offset.x) && isNaN(options.offset.y) ) {
+		                    if (( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') &&( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right')){
+		                        position = (attachment == 'fixed') ? '' : options.offset.y + ' ' + options.offset.x;
+		                    }
+		                } else if ( isNaN(options.offset.y) ) {
+		                    if ( ( options.offset.y.toLowerCase() === 'top' || options.offset.y.toLowerCase() === 'bottom') ) {
+		                        position = (attachment == 'fixed') ? '' : options.offset.y + ' -' + (($glue.offset().top) - ($source.offset().top) - (options.offset.y)) + 'px';
+		                    }
+		                } else if ( options.offset.x.toLowerCase() === 'left' || options.offset.x.toLowerCase() === 'right'){
 		                    position = (attachment == 'fixed') ? '' : ' -' + (($glue.offset().left) - ($source.offset().left) - (options.offset.x)) + 'px ' + options.offset.x.toLowerCase ;
 		                }
 				$glue.css({
