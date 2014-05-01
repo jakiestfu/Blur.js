@@ -229,7 +229,8 @@
 					'background-image': 'url("' + blurredData + '")',
 					'background-repeat': $source.css('backgroundRepeat'),
 					'background-position': position,
-					'background-attachment': attachment
+					'background-attachment': attachment,
+                    'background-size': $source.css('backgroundSize')
 				});
 				if(options.optClass != false) {
 					$glue.addClass(options.optClass);
