@@ -1,4 +1,5 @@
-(function ($) {
+(function (define) {
+define(['jquery'], function ($) {
 	$.fn.blurjs = function (options) {
 		var canvas = document.createElement('canvas');
 		var isCached = false;
@@ -280,4 +281,10 @@
 			}
 		});
 	};
-})(jQuery);
+	return $; // return jQuery
+});
+})(
+	typeof define === 'function' && define.amd
+		? define
+		: function (r, factory) { factory(jQuery); }
+);
