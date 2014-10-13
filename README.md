@@ -33,6 +33,10 @@ $('.target').blurjs({
 	onReady: null		//Callback triggered when image is loaded, blured and applied to dtarget.
 });
 ````
+## Building Blur.js by Grunt
+- install grunt-cli
+- run `grunt concat`
+
 
 ## Licensing
 MIT

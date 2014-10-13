@@ -14,7 +14,7 @@
     "blur",
     "stackblur"
   ],
-  "license": "?",
+  "license": "MIT",
   "ignore": [
     "node_modules",
     "bower_components",

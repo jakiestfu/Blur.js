@@ -1,36 +1,4 @@
-
-(function ($) {
-	var noSpecialChars = /[^a-zA-Z0-9]/g;
-	noSpecialChars.regexp = function() {
-		noSpecialChars.lastIndex = 0;
-		return noSpecialChars;
-	};
-	typeof Storage === 'undefined' && (Storage = {});
-	Storage.prototype.cacheChecksum = function(opts, formattedSource) {
-		var newData = '';
-		for(var key in opts) {
-			var obj = opts[key];
-			if($.isPlainObject(obj)) {
-				newData += (obj.x.toString() + obj.y.toString() + ",").replace(noSpecialChars.regexp(), "");
-			} else if(typeof obj === 'object') { // DOM element
-				newData += obj.nodeName + '#' + obj.id + '.' + obj.className;
-			} else {
-				newData += (obj + ",").replace(noSpecialChars.regexp(), "");
-			}
-		}
-		var originalData = this.getItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
-		if(originalData != newData) {
-			this.removeItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
-			try {
-				this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
-			} catch(err) {
-				typeof console !== 'undefined' && console.warn(err);
-			}
-			opts.debug && console.log('Settings Changed, Cache Emptied');
-		}
-	};
-
-// StackBoxBlur - start
+stackBlur = (function() {
 /*
 StackBoxBlur - a fast almost Box Blur For Canvas
 
@@ -204,7 +172,42 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 
 }
 
-// StackBoxBlur - end
+return stackBoxBlurCanvasRGB;
+
+})();
+
+(function ($) {
+	var noSpecialChars = /[^a-zA-Z0-9]/g;
+	noSpecialChars.regexp = function() {
+		noSpecialChars.lastIndex = 0;
+		return noSpecialChars;
+	};
+	typeof Storage === 'undefined' && (Storage = {});
+	Storage.prototype.cacheChecksum = function(opts, formattedSource) {
+		var newData = '';
+		for(var key in opts) {
+			var obj = opts[key];
+			if($.isPlainObject(obj)) {
+				newData += (obj.x.toString() + obj.y.toString() + ",").replace(noSpecialChars.regexp(), "");
+			} else if(typeof obj === 'object') { // DOM element
+				newData += obj.nodeName + '#' + obj.id + '.' + obj.className;
+			} else {
+				newData += (obj + ",").replace(noSpecialChars.regexp(), "");
+			}
+		}
+		var originalData = this.getItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
+		if(originalData != newData) {
+			this.removeItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache');
+			try {
+				this.setItem(opts.cacheKeyPrefix + opts.selector + '-' + formattedSource + '-options-cache', newData);
+			} catch(err) {
+				typeof console !== 'undefined' && console.warn(err);
+			}
+			opts.debug && console.log('Settings Changed, Cache Emptied');
+		}
+	};
+
+
 
 	$.fn.blurjs = function(options) {
 		if(!this.length) {
@@ -296,7 +299,7 @@ function stackBoxBlurCanvasRGB(canvas, top_x, top_y, width, height, radius, iter
 				canvas.width = tempImg.width;
 				canvas.height = tempImg.height;
 				ctx.drawImage(tempImg, 0, 0);
-				stackBoxBlurCanvasRGB(canvas, 0, 0, canvas.width, canvas.height, options.radius, 1);
+				stackBlur(canvas, 0, 0, canvas.width, canvas.height, options.radius, 1);
 				if(options.overlay) {
 					ctx.beginPath();
 					ctx.rect(0, 0, tempImg.width, tempImg.width);
