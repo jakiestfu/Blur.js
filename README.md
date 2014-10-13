@@ -2,6 +2,15 @@
 
 blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.
 
+## Installation
+
+### Manual
+- attach jquery to your code.
+- attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
+
+### By Bower
+- `bower info blurjs`
+- attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
 
 ## Usage
 
@@ -33,10 +42,10 @@ $('.target').blurjs({
 	onReady: null		//Callback triggered when image is loaded, blured and applied to dtarget.
 });
 ````
+
 ## Building Blur.js by Grunt
 - install grunt-cli
 - run `grunt concat`
-
 
 ## Licensing
 MIT
