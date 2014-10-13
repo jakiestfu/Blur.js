@@ -7,7 +7,7 @@
     "Cezary Daniel Nowak <cezary.nowak@gmail.com>"
   ],
   "description": "blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.",
-  "main": "jquery.blur.js",
+  "main": "dist/jquery.blur.js",
   "keywords": [
     "blur",
     "stackbox",
