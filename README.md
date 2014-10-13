@@ -9,7 +9,7 @@ blur.js is a jQuery plugin that produces psuedo-transparent blurred elements ove
 - attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
 
 ### By Bower
-- `bower info blurjs`
+- `bower install blurjs`
 - attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
 
 ## Usage
