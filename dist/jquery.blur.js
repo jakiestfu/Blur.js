@@ -1,6 +1,18 @@
+/**
+ * Blur.js (jQuery module)
+ *
+ * @see {@link https://github.com/jakiestfu/Blur.js|GitHub}
+ * @see {@link http://blurjs.com/}
+ * @author Jacob Kelley <jakie8@gmail.com>, Cezary Daniel Nowak <cezary.nowak@gmail.com>
+ * @license MIT
+ */
+
+(function (define) {
+define(['jquery'], function ($) {
+
 // Stackblur, courtesy of Mario Klingemann: https://github.com/Quasimondo/QuasimondoJS/blob/master/blur/StackBlur.js
 // #fbe3561e65afc7b3f1c745ff61372c1aaf7d732b
-stackBlur = (function() {
+var stackBlur = (function() {
 	var mul_table = [
 		512, 512, 456, 512, 328, 456, 335, 512, 405, 328, 271, 456, 388, 335, 292, 512,
 		454, 405, 364, 328, 298, 271, 496, 456, 420, 388, 360, 335, 312, 292, 273, 512,
@@ -271,7 +283,6 @@ stackBlur = (function() {
 	return stackBlurCanvasRGB;
 })();
 
-(function ($) {
 	var noSpecialChars = /[^a-zA-Z0-9]/g;
 	noSpecialChars.regexp = function() {
 		noSpecialChars.lastIndex = 0;
@@ -420,4 +431,11 @@ stackBlur = (function() {
 			return _this;
 		}
 	};
-})(jQuery);
+ return $; // return jQuery
+});
+
+})(
+	typeof define === 'function' && define.amd
+		? define
+		: function (r, factory) { factory(jQuery); }
+);

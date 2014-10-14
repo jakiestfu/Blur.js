@@ -1,4 +1,4 @@
-stackBlur = (function() {
+var stackBlur = (function() {
 /*
 StackBoxBlur - a fast almost Box Blur For Canvas
 
