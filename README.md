@@ -7,8 +7,8 @@ Say you wanted to use blurjs in a project, but you wanted to list it as a depend
 ```javascript
 {
   ...
-	"dependencies": {
-		"blurjs": "git://github.com/jamen/blurjs.git"
-	}
+  "dependencies": {
+    "blurjs": "git://github.com/jamen/blurjs.git"
+  }
 }
 ```
