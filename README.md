@@ -1,14 +1,35 @@
-# blurjs
+# Blur.js
 
-This repo is a fork of the original [Blur.js](https://github.com/jakiestfu/Blur.js) library by Jacob Kelley.  This fork adds the ability to add the Git repo as a dependency in npm or other Git-supporting package managers.
+blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.
 
-Say you wanted to use blurjs in a project, but you wanted to list it as a dependency in your `package.json`.  With this fork you could do exactly that:
 
-```javascript
-{
-  ...
-  "dependencies": {
-    "blurjs": "git://github.com/jamen/blurjs.git"
-  }
-}
-```
+## Usage
+
+````
+$('.target').blurjs({
+	source: 'body',
+	radius: 7,
+	overlay: 'rgba(255,255,255,0.4)'
+});
+````
+
+## Defaults
+
+````
+$('.target').blurjs({
+	source: 'body',		//Background to blur
+	radius: 5,			//Blur Radius
+	overlay: '',		//Overlay Color, follow CSS3's rgba() syntax
+	offset: {			//Pixel offset of background-position
+		x: 0,
+		y: 0
+	},
+	optClass: '',					//Class to add to all affected elements
+	cache: false,					//If set to true, blurred image will be cached and used in the future. If image is in cache already, it will be used.
+	cacheKeyPrefix: 'blurjs-',		//Prefix to the keyname in the localStorage object
+	draggable: false				//Only used if jQuery UI is present. Will change background-position to fixed
+});
+````
+
+## Licensing
+MIT
