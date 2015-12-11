@@ -251,6 +251,9 @@ define(['jquery'], function ($) {
 					});
 					$glue.draggable();
 				}
+
+				// call event at the end
+				$glue.trigger('blurredImageLoaded');
 			};
 			Storage.prototype.cacheChecksum = function (opts) {
 				var newData = '';
