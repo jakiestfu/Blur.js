@@ -29,8 +29,6 @@
 		}
 	};
 
-
-
 	$.fn.blurjs = function(options) {
 		if(!this.length) {
 			if(options.onReady) options.onReady();
@@ -143,6 +141,10 @@
 				});
 				options.onReady && options.onReady();
 			};
+			if(/^http/.test(formattedSource)) {
+				// enable CORS for external sources
+				img.crossOrigin = "Anonymous";
+			}
 			tempImg.src = formattedSource;
 			return _this;
 		}
