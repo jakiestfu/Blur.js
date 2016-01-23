@@ -1,0 +1,13 @@
+{
+  "name": "blur-js",
+  "version": "1.0.0",
+  "description": "blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements. http://blurjs.com/",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CezaryDanielNowak/Blur.js.git"
+  },
+  "author": "Jacob Kelley",
+  "license": "MIT",
+  "homepage": "http://blurjs.com/"
+}

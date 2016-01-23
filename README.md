@@ -2,6 +2,12 @@
 
 blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.
 
+It provides two blur algorithms:
+- StackBlur: slower, prettier
+- StackBoxBlur: faster, uglier
+
+Pick the best for your needs.
+
 ## Installation
 
 ### Manual
@@ -11,6 +17,12 @@ blur.js is a jQuery plugin that produces psuedo-transparent blurred elements ove
 ### By Bower
 - `bower install blurjs`
 - attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
+
+### By npm
+- `npm install --save blur-js`
+- `var blurjs = require('blur-js')();`
+  or
+  `var blurjs = require('blur-js')('stack-box-blur');`
 
 ## Usage
 
@@ -44,7 +56,7 @@ $('.target').blurjs({
 ````
 
 ## Building Blur.js by Grunt
-- install grunt-cli
+- (sudo) `npm install -g grunt-cli`
 - run `grunt concat`
 
 ## Licensing
