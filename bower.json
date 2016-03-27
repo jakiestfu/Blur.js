@@ -1,0 +1,24 @@
+{
+  "name": "Blur.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/CezaryDanielNowak/Blur.js",
+  "authors": [
+    "Jacob Kelley <jakie8@gmail.com>",
+    "Cezary Daniel Nowak <cezary.nowak@gmail.com>"
+  ],
+  "description": "blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.",
+  "main": "dist/jquery.blur.js",
+  "keywords": [
+    "blur",
+    "stackbox",
+    "blur",
+    "stackblur"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
