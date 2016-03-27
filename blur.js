@@ -204,8 +204,8 @@ define(['jquery'], function ($) {
 			var $glue = $(this);
 			var $source = $(options.source);
 			var formattedSource = ($source.css('backgroundImage')).replace(/"/g, "").replace(/url\(|\)$/ig, "");
-			ctx = canvas.getContext('2d');
-			tempImg = new Image();
+			var ctx = canvas.getContext('2d');
+			var tempImg = new Image();
 			tempImg.onload = function () {
 				if(!isCached) {
 					canvas.style.display = "none";
