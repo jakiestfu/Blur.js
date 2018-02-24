@@ -10,19 +10,10 @@ Pick the best for your needs.
 
 ## Installation
 
-### Manual
-- attach jquery to your code.
-- attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
+Ensure you have jquery running on your page and include one of the two following scripts: `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
 
-### By Bower
-- `bower install blurjs`
-- attach `dist/jquery.blur.js` or `dist/jquery.stack-box-blur.js`
-
-### By npm
-- `npm install --save blur-js`
-- `var blurjs = require('blur-js')();`
-  or
-  `var blurjs = require('blur-js')('stack-box-blur');`
+### Note
+There are packages provided by Bower and npm that carry the original blur.js without current fixes found in this fork.
 
 ## Usage
 
@@ -54,10 +45,6 @@ $('.target').blurjs({
 	onReady: null		//Callback triggered when image is loaded, blured and applied to dtarget.
 });
 ````
-
-## Building Blur.js by Grunt
-- (sudo) `npm install -g grunt-cli`
-- run `grunt concat`
 
 ## Licensing
 MIT
