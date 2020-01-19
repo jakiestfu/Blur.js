@@ -1,3 +1,7 @@
+# Archival Notice
+
+I'm a archiving this repository as browsers are beginning to support [backdrop-filter](https://developer.mozilla.org/en-US/docs/Web/CSS/backdrop-filter), deprecating this plugin. 
+
 # Blur.js
 
 blur.js is a jQuery plugin that produces psuedo-transparent blurred elements over other elements.
